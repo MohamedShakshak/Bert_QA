@@ -15,3 +15,18 @@ A **parameter-efficient** (LoRA) fine-tuned BERT model for **question answering*
 
 ```bash
 pip install torch transformers peft accelerate evaluate
+
+## Usage 🛠️
+from transformers import AutoTokenizer, AutoModelForQuestionAnswering, pipeline
+from peft import PeftModel, PeftConfig
+
+config = PeftConfig.from_pretrained("MohamedShakhsak/bert-qa-squad2_V2")
+
+base_model = AutoModelForQuestionAnswering.from_pretrained(config.base_model_name_or_path)
+lora_model = PeftModel.from_pretrained(base_model, "MohamedShakhsak/bert-qa-squad2_V2")
+
+merged_model = lora_model.merge_and_unload()
+
+tokenizer = AutoTokenizer.from_pretrained(config.base_model_name_or_path)
+
+qa_pipeline = pipeline("question-answering", model=merged_model, tokenizer=tokenizer) 
